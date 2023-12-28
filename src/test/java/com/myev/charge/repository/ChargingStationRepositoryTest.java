@@ -148,4 +148,20 @@ class ChargingStationRepositoryTest {
         assertEquals(expectedStation.getNumberOfChargingPoints(), actualStation.getNumberOfChargingPoints());
         assertEquals(expectedStation.getStatus(), actualStation.getStatus());
     }
+
+    @Test
+    void testDelete() {
+        // given
+        ChargingStation expectedStation = _station;
+        _stationRepository.saveAll(_stationList);
+
+        // when
+        _stationRepository.delete(expectedStation);
+
+        // then
+        // assert that the actualStation is null
+        ChargingStation actualStation = _stationRepository.findById(expectedStation.getId()).orElse(null);
+        assertNull(actualStation);
+
+    }
 }
