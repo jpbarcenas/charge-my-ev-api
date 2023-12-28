@@ -3,6 +3,7 @@ package com.myev.charge.service.impl;
 import com.myev.charge.domain.ChargingStation;
 import com.myev.charge.domain.Location;
 import com.myev.charge.domain.enums.StationStatus;
+import com.myev.charge.exception.DuplicateLocationException;
 import com.myev.charge.payload.ChargingStationDto;
 import com.myev.charge.payload.LocationDto;
 import com.myev.charge.repository.ChargingStationRepository;
@@ -10,14 +11,22 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
+@ExtendWith(MockitoExtension.class)
 class ChargingStationServiceImplTest {
 
     @Mock
@@ -113,6 +122,47 @@ class ChargingStationServiceImplTest {
 
     @Test
     void testDoCreate() {
+        // given
+        ChargingStationDto expectedStationDto = _stationDto;
+
+        // when
+        ChargingStationDto actualStationDto = _stationService.doCreate(expectedStationDto);
+
+        // then
+        // assert that the actualStationDto is not null
+        assertNotNull(actualStationDto);
+
+        // assert that the actualStationDto has the same id as the expectedStationDto
+        assertEquals(expectedStationDto.getId(), actualStationDto.getId());
+
+        // assert that the actualStationDto has the same values as the expectedStationDto
+        assertEquals(expectedStationDto.getNumberOfChargingPoints(), actualStationDto.getNumberOfChargingPoints());
+        assertEquals(expectedStationDto.getStatus(), actualStationDto.getStatus());
+        assertEquals(expectedStationDto.getLocation().getAddress(), actualStationDto.getLocation().getAddress());
+        assertEquals(expectedStationDto.getLocation().getLatitude(), actualStationDto.getLocation().getLatitude());
+        assertEquals(expectedStationDto.getLocation().getLongitude(), actualStationDto.getLocation().getLongitude());
+
+    }
+
+
+
+    @Test
+    void testDoCreateDuplicate() {
+        // given
+        //save the station
+        given(_stationRepository.save(_station))
+                .willReturn(_station);
+        given(_stationRepository.findById(_station.getId()))
+                .willReturn(Optional.of(_station));
+
+        // when
+        assertThrows(DuplicateLocationException.class, () -> {
+            _stationService.doCreate(_stationDto);
+        });
+
+        // then
+        verify(_stationRepository, never()).save(_station);
+
     }
 
     @Test
