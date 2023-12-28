@@ -38,5 +38,13 @@ public class ChargingStationController {
         return new ResponseEntity<>(_stationService.doGetAll(pageNo, pageSize, sortBy, sortDir), HttpStatus.OK);
     }
 
+    // get charging station by id
+    @GetMapping("/{id}")
+    public ResponseEntity<ChargingStationDto> getStationById(@PathVariable("id") Long id) {
+
+        var station = _stationService.doGetById(id);
+
+        return new ResponseEntity<>(station, HttpStatus.OK);
+    }
 
 }
