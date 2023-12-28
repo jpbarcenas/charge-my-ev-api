@@ -8,11 +8,15 @@ import com.myev.charge.domain.enums.StationStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 public class ChargingPointRepositoryTest {
@@ -89,11 +93,13 @@ public class ChargingPointRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        // setting up the test location
         _location = new Location();
         _location.setAddress("124 Main St");
         _location.setLatitude(30.0);
         _location.setLongitude(-465.0);
 
+        // setting up the test station
         _station = new ChargingStation();
         _station.setId(124L);
         _station.setLocation(_location);
@@ -101,16 +107,21 @@ public class ChargingPointRepositoryTest {
         _station.setStatus(StationStatus.IN_USE);
 
         _stationList.add(_station);
+
+        // setting up the test charger type
         _chargerType = new ChargerType();
         _chargerType.setType("DC");
         _chargerType.setSpeed(10);
         _chargerType.setPrice(15);
 
+        // setting up the test charging point
         _point = new ChargingPoint();
         _point.setPowerLevel(75);
         _point.setId(115L);
         _point.setChargingStation(_station);
         _point.setChargerType(_chargerType);
+
+        _pointList.add(_point);
     }
 
     @AfterEach
@@ -119,6 +130,40 @@ public class ChargingPointRepositoryTest {
         _stationList.remove(_station);
         _stationRepository.deleteAll();
         _pointRepository.deleteAll();
+    }
+
+    @Test
+    void testSave() {
+        // given
+        ChargingPoint expectedPoint = _point;
+
+        _stationRepository.saveAll(_stationList);
+
+        // when
+        ChargingPoint actualPoint = _pointRepository.save(expectedPoint);
+
+        // then
+        // assert that the actualPoint is not null
+        assertNotNull(actualPoint);
+
+        // assert that the actualPoint has an id
+        assertNotNull(actualPoint.getId());
+
+        // assert that the actualPoint has the same values as the expectedPoint
+        assertEquals(expectedPoint.getId(), actualPoint.getId());
+        assertEquals(expectedPoint.getChargerType().getType(), actualPoint.getChargerType().getType());
+        assertEquals(expectedPoint.getChargerType().getSpeed(), actualPoint.getChargerType().getSpeed());
+        assertEquals(expectedPoint.getChargerType().getPrice(), actualPoint.getChargerType().getPrice());
+        assertEquals(expectedPoint.getPowerLevel(), actualPoint.getPowerLevel());
+
+        // assert that the actualPoint has the same Station as the expectedPoint
+        assertEquals(expectedPoint.getChargingStation().getId(), actualPoint.getChargingStation().getId());
+        assertEquals(expectedPoint.getChargingStation().getLocation().getAddress(), actualPoint.getChargingStation().getLocation().getAddress());
+        assertEquals(expectedPoint.getChargingStation().getLocation().getLatitude(), actualPoint.getChargingStation().getLocation().getLatitude());
+        assertEquals(expectedPoint.getChargingStation().getLocation().getLongitude(), actualPoint.getChargingStation().getLocation().getLongitude());
+        assertEquals(expectedPoint.getChargingStation().getNumberOfChargingPoints(), actualPoint.getChargingStation().getNumberOfChargingPoints());
+        assertEquals(expectedPoint.getChargingStation().getStatus(), actualPoint.getChargingStation().getStatus());
+
     }
 
 }
