@@ -36,7 +36,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorDetailsVO errorDetails = new ErrorDetailsVO(new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(MaxChargingPointsReachedException.class)
+    public ResponseEntity<ErrorDetailsVO> handleMaxChargingPointsReachedException(MaxChargingPointsReachedException ex,
+                                                                           WebRequest request)
+    {
+        ErrorDetailsVO errorDetails = new ErrorDetailsVO(new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_ACCEPTABLE);
     }
 
     // handle global exceptions
