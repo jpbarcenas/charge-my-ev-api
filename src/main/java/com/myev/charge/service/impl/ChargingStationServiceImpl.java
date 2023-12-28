@@ -5,6 +5,7 @@ import com.myev.charge.domain.ChargingPoint;
 import com.myev.charge.domain.ChargingStation;
 import com.myev.charge.domain.Location;
 import com.myev.charge.exception.DuplicateLocationException;
+import com.myev.charge.exception.ResourceNotFoundException;
 import com.myev.charge.payload.*;
 import com.myev.charge.repository.ChargingStationRepository;
 import com.myev.charge.service.IChargingStationService;
@@ -75,8 +76,11 @@ public class ChargingStationServiceImpl implements IChargingStationService {
     }
 
     @Override
-    public ChargingStationDto doGetAllById(long id) {
-        return null;
+    public ChargingStationDto doGetById(long id) {
+        ChargingStation station = _stationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Charging Station", "id", id));
+
+        return mapToDto(station);
     }
 
     @Override

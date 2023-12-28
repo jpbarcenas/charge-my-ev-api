@@ -9,7 +9,7 @@ public interface IChargingStationService {
 
     ChargingStationResponse doGetAll(int pageNo, int pageSize, String sortBy, String sortDir);
 
-    ChargingStationDto doGetAllById(long id);
+    ChargingStationDto doGetById(long id);
 
     ChargingStationDto doUpdate(ChargingStationDto stationDto, long id);
 
