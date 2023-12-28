@@ -15,8 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class ChargingPointRepositoryTest {
@@ -128,8 +127,9 @@ public class ChargingPointRepositoryTest {
     void tearDown() {
         _pointList.remove(_point);
         _stationList.remove(_station);
-        _stationRepository.deleteAll();
+
         _pointRepository.deleteAll();
+        _stationRepository.deleteAll();
     }
 
     @Test
@@ -164,6 +164,85 @@ public class ChargingPointRepositoryTest {
         assertEquals(expectedPoint.getChargingStation().getNumberOfChargingPoints(), actualPoint.getChargingStation().getNumberOfChargingPoints());
         assertEquals(expectedPoint.getChargingStation().getStatus(), actualPoint.getChargingStation().getStatus());
 
+    }
+
+    @Test
+    void testFindAll() {
+        // given
+        _stationRepository.saveAll(_stationList);
+        _pointRepository.saveAll(_pointList);
+
+        // when
+        List<ChargingPoint> actualPoints = _pointRepository.findAll();
+
+        // then
+        // assert that the actualPoints is not null
+        assertNotNull(actualPoints);
+
+        // assert that the actualPoints has the same size as the pointsList
+        assertEquals(_pointList.size(), actualPoints.size());
+
+        // assert that the actualPoints has the same values as the pointsList
+        for (int i = 0; i < _pointList.size(); i++) {
+            assertEquals(_pointList.get(i).getId(), actualPoints.get(i).getId());
+            assertEquals(_pointList.get(i).getChargerType().getType(), actualPoints.get(i).getChargerType().getType());
+            assertEquals(_pointList.get(i).getChargerType().getSpeed(), actualPoints.get(i).getChargerType().getSpeed());
+            assertEquals(_pointList.get(i).getChargerType().getPrice(), actualPoints.get(i).getChargerType().getPrice());
+            assertEquals(_pointList.get(i).getChargingStation().getId(), actualPoints.get(i).getChargingStation().getId());
+            assertEquals(_pointList.get(i).getPowerLevel(), actualPoints.get(i).getPowerLevel());
+        }
+
+    }
+
+    @Test
+    void testFindById() {
+        // given
+        _stationRepository.saveAll(_stationList);
+        _pointRepository.saveAll(_pointList);
+
+        ChargingPoint expectedPoint = _point;
+
+        // when
+        ChargingPoint actualPoint = _pointRepository.findById(expectedPoint.getId()).orElse(null);
+
+        // then
+        // assert that the actualPoint is not null
+        assertNotNull(actualPoint);
+
+        // assert that the actualPoint has an id
+        assertNotNull(actualPoint.getId());
+
+        // assert that the actualPoint has the same values as the expectedPoint
+        assertEquals(expectedPoint.getId(), actualPoint.getId());
+        assertEquals(expectedPoint.getChargerType().getType(), actualPoint.getChargerType().getType());
+        assertEquals(expectedPoint.getChargerType().getSpeed(), actualPoint.getChargerType().getSpeed());
+        assertEquals(expectedPoint.getChargerType().getPrice(), actualPoint.getChargerType().getPrice());
+        assertEquals(expectedPoint.getPowerLevel(), actualPoint.getPowerLevel());
+
+        // assert that the actualPoint has the same Station as the expectedPoint
+        assertEquals(expectedPoint.getChargingStation().getId(), actualPoint.getChargingStation().getId());
+        assertEquals(expectedPoint.getChargingStation().getLocation().getAddress(), actualPoint.getChargingStation().getLocation().getAddress());
+        assertEquals(expectedPoint.getChargingStation().getLocation().getLatitude(), actualPoint.getChargingStation().getLocation().getLatitude());
+        assertEquals(expectedPoint.getChargingStation().getLocation().getLongitude(), actualPoint.getChargingStation().getLocation().getLongitude());
+        assertEquals(expectedPoint.getChargingStation().getNumberOfChargingPoints(), actualPoint.getChargingStation().getNumberOfChargingPoints());
+        assertEquals(expectedPoint.getChargingStation().getStatus(), actualPoint.getChargingStation().getStatus());
+    }
+
+    @Test
+    void testDelete() {
+        // given
+        _stationRepository.saveAll(_stationList);
+        _pointRepository.saveAll(_pointList);
+
+        ChargingPoint expectedPoint = _point;
+
+        // when
+        _pointRepository.delete(expectedPoint);
+
+        // then
+        // assert that the actualPoint is null
+        ChargingPoint actualPoint = _pointRepository.findById(expectedPoint.getId()).orElse(null);
+        assertNull(actualPoint);
     }
 
 }
