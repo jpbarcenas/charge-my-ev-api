@@ -23,4 +23,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(DuplicateLocationException.class)
+    public ResponseEntity<ErrorDetailsVO> handleDuplicateLocationException(DuplicateLocationException ex,
+                                                                         WebRequest request)
+    {
+        ErrorDetailsVO errorDetails = new ErrorDetailsVO(new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
 }
