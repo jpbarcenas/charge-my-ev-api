@@ -56,4 +56,13 @@ public class ChargingStationController {
         return new ResponseEntity<>(updatedStation, HttpStatus.OK);
     }
 
+    // delete charging station
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteStation(@PathVariable("id") Long id) {
+
+        _stationService.doDelete(id);
+
+        return new ResponseEntity<>("Charging Station has been deleted!", HttpStatus.OK);
+    }
+
 }

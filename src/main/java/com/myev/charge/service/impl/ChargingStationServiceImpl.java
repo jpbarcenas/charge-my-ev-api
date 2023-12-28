@@ -114,6 +114,11 @@ public class ChargingStationServiceImpl implements IChargingStationService {
     @Override
     public void doDelete(long id) {
 
+            // check if the station exists
+            ChargingStation station = _stationRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Charging Station", "id", id));
+
+            _stationRepository.delete(station);
     }
 
     private boolean existsByLocationAddress(String address) {
