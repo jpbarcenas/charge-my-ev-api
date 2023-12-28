@@ -40,4 +40,15 @@ public class ChargingPointController {
     ) {
         return new ResponseEntity<>(_pointService.doGetAllByStationId(stationsId, pageNo, pageSize, sortBy, sortDir), HttpStatus.OK);
     }
+
+    // get charging point by id
+    @GetMapping("/points/{pointId}")
+    public ResponseEntity<ChargingPointDto> getPointByIdAndStationId(
+            @PathVariable("stationId") long stationId,
+            @PathVariable("pointId") long pointId) {
+
+        var point = _pointService.getByIdAndStationId(stationId, pointId);
+
+        return new ResponseEntity<>(point, HttpStatus.OK);
+    }
 }

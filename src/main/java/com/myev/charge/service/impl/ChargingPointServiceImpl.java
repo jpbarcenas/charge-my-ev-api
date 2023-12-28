@@ -95,7 +95,21 @@ public class ChargingPointServiceImpl implements IChargingPointService {
 
     @Override
     public ChargingPointDto getByIdAndStationId(long stationId, long pointId) {
-        return null;
+
+            // get station by id
+            ChargingStation station = _stationRepository.findById(stationId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Charging Station", "id", stationId));
+
+            // get charging point by id
+            ChargingPoint point = _pointRepository.findById(pointId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Charging Point", "id", pointId));
+
+            // check if charging point belongs to charging station
+            if (!point.getChargingStation().getId().equals(station.getId())) {
+                throw new ResourceNotFoundException("Charging Point", "id", pointId);
+            }
+
+            return mapToDto(point);
     }
 
     @Override
