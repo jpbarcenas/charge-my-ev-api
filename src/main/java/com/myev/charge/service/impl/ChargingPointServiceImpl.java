@@ -135,7 +135,18 @@ public class ChargingPointServiceImpl implements IChargingPointService {
     }
 
     @Override
-    public void doDelete(long id) {
+    public void doDelete(long stationId, long id) {
+
+        // get station by id
+        ChargingStation station = _stationRepository.findById(stationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Charging Station", "id", stationId));
+
+        // get charging point by id
+        ChargingPoint point = _pointRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Charging Point", "id", id));
+
+        // delete charging point from database
+        _pointRepository.delete(point);
 
     }
 

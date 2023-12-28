@@ -13,5 +13,5 @@ public interface IChargingPointService {
 
     ChargingPointDto doUpdate(ChargingPointDto pointDto, long pointId);
 
-    void doDelete(long id);
+    void doDelete(long stationId, long id);
 }

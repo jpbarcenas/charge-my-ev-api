@@ -61,4 +61,15 @@ public class ChargingPointController {
         return new ResponseEntity<>(updatedPoint, HttpStatus.OK);
     }
 
+
+
+    // delete charging point
+    @DeleteMapping("/points/{pointId}")
+    public ResponseEntity<String> deletePoint(
+            @PathVariable("stationId") long stationId,
+            @PathVariable("pointId") long pointId) {
+        _pointService.doDelete(stationId, pointId);
+        return new ResponseEntity<>("Charging point deleted successfully!", HttpStatus.OK);
+    }
+
 }
