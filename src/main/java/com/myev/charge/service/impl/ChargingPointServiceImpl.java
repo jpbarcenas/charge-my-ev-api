@@ -2,14 +2,21 @@ package com.myev.charge.service.impl;
 
 import com.myev.charge.domain.ChargerType;
 import com.myev.charge.domain.ChargingPoint;
-import com.myev.charge.payload.ChargerTypeDto;
-import com.myev.charge.payload.ChargingPointDto;
-import com.myev.charge.payload.ChargingPointResponse;
-import com.myev.charge.payload.ChargingStationDto;
+import com.myev.charge.domain.ChargingStation;
+import com.myev.charge.payload.*;
 import com.myev.charge.repository.ChargingPointRepository;
 import com.myev.charge.repository.ChargingStationRepository;
 import com.myev.charge.service.IChargingPointService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
 public class ChargingPointServiceImpl implements IChargingPointService {
 
     private final ChargingPointRepository _pointRepository;
@@ -28,7 +35,33 @@ public class ChargingPointServiceImpl implements IChargingPointService {
 
     @Override
     public ChargingPointResponse doGetAllByStationId(long stationId, int pageNo, int pageSize, String sortBy, String sortDir) {
-        return null;
+        // create Sort object
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+
+        // create Pageable object
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        // get Page object where ChargingStation id is equal to stationId
+        Page<ChargingPoint> pointPages = _pointRepository.findAll(pageable);
+
+        // get content from Page object
+        List<ChargingPoint> pointList = pointPages.getContent();
+
+        // convert List of Entity to List of Dto
+        List<ChargingPointVO> content = pointList.stream()
+                .filter(point -> point.getChargingStation().getId().equals(stationId))
+                .map(this::mapToVO).collect(Collectors.toList());
+
+        ChargingPointResponse pointResponse = new ChargingPointResponse();
+        pointResponse.setContent(content);
+        pointResponse.setPageNo(pointPages.getNumber());
+        pointResponse.setPageSize(pointPages.getSize());
+        pointResponse.setTotalElements(pointPages.getTotalElements());
+        pointResponse.setTotalPages(pointPages.getTotalPages());
+        pointResponse.setLast(pointPages.isLast());
+
+        return pointResponse;
     }
 
     @Override
@@ -85,5 +118,22 @@ public class ChargingPointServiceImpl implements IChargingPointService {
         chargingPoint.setChargerType(chargerType);
 
         return chargingPoint;
+    }
+
+    private ChargingPointVO mapToVO(ChargingPoint point) {
+
+            // getting the charger type from charging point
+            ChargerTypeVO chargerTypeVO = new ChargerTypeVO();
+            chargerTypeVO.setType(point.getChargerType().getType());
+            chargerTypeVO.setPrice(point.getChargerType().getPrice());
+            chargerTypeVO.setSpeed(point.getChargerType().getSpeed());
+
+            // create VO object
+            ChargingPointVO pointVO = new ChargingPointVO();
+            pointVO.setStationId(point.getChargingStation().getId());
+            pointVO.setPowerLevel(point.getPowerLevel());
+            pointVO.setChargerType(chargerTypeVO);
+
+            return pointVO;
     }
 }
