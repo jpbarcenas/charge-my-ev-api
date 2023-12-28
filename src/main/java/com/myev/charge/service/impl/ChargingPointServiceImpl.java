@@ -190,6 +190,7 @@ public class ChargingPointServiceImpl implements IChargingPointService {
 
             // create VO object
             ChargingPointVO pointVO = new ChargingPointVO();
+            pointVO.setPointId(point.getId());
             pointVO.setStationId(point.getChargingStation().getId());
             pointVO.setPowerLevel(point.getPowerLevel());
             pointVO.setChargerType(chargerTypeVO);
