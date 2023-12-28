@@ -47,4 +47,13 @@ public class ChargingStationController {
         return new ResponseEntity<>(station, HttpStatus.OK);
     }
 
+    // update charging station
+    @PutMapping("/{id}")
+    public ResponseEntity<ChargingStationDto> updateStation(@RequestBody ChargingStationDto stationDto, @PathVariable("id") Long id) {
+
+        var updatedStation = _stationService.doUpdate(stationDto, id);
+
+        return new ResponseEntity<>(updatedStation, HttpStatus.OK);
+    }
+
 }

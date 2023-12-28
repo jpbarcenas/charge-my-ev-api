@@ -85,7 +85,30 @@ public class ChargingStationServiceImpl implements IChargingStationService {
 
     @Override
     public ChargingStationDto doUpdate(ChargingStationDto stationDto, long id) {
-        return null;
+
+        // check if the station exists
+        ChargingStation station = _stationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Charging Station", "id", id));
+
+        // check if station address is changed
+        if (!station.getLocation().getAddress().equals(stationDto.getLocation().getAddress())) {
+            // check if the address already exists
+            if (existsByLocationAddress(stationDto.getLocation().getAddress())) {
+                throw new DuplicateLocationException("Charging Station", "address", stationDto.getLocation().getAddress());
+            }
+        }
+
+        // update the station
+        station.getLocation().setAddress(stationDto.getLocation().getAddress());
+        station.getLocation().setLatitude(stationDto.getLocation().getLatitude());
+        station.getLocation().setLongitude(stationDto.getLocation().getLongitude());
+        station.setNumberOfChargingPoints(stationDto.getNumberOfChargingPoints());
+        station.setStatus(stationDto.getStatus());
+
+        // save updated station to database
+        ChargingStation updatedStation = _stationRepository.save(station);
+
+        return mapToDto(updatedStation);
     }
 
     @Override
