@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChargingStationVO {
-    private Long id;
+    private Long stationId;
     @Embedded
     private LocationVO location;
     private int numberOfChargingPoints;

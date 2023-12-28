@@ -192,7 +192,7 @@ public class ChargingStationServiceImpl implements IChargingStationService {
         locationVO.setLongitude(station.getLocation().getLongitude());
 
         ChargingStationVO stationVO = new ChargingStationVO();
-        stationVO.setId(station.getId());
+        stationVO.setStationId(station.getId());
         stationVO.setLocation(locationVO);
         stationVO.setNumberOfChargingPoints(station.getChargingPoints().size());
         stationVO.setStatus(station.getStatus());
