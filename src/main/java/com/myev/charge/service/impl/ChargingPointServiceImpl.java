@@ -114,7 +114,24 @@ public class ChargingPointServiceImpl implements IChargingPointService {
 
     @Override
     public ChargingPointDto doUpdate(ChargingPointDto pointDto, long pointId) {
-        return null;
+
+            // get charging point by id
+            ChargingPoint point = _pointRepository.findById(pointId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Charging Point", "id", pointId));
+
+            // convert Dto to Entity
+            ChargingPoint pointToUpdate = mapToEntity(pointDto);
+
+            // set charging station to charging point
+            pointToUpdate.setChargingStation(point.getChargingStation());
+
+            // set id to charging point
+            pointToUpdate.setId(point.getId());
+
+            // save Entity to database
+            point = _pointRepository.save(pointToUpdate);
+
+            return mapToDto(point);
     }
 
     @Override

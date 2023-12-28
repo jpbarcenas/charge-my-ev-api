@@ -51,4 +51,14 @@ public class ChargingPointController {
 
         return new ResponseEntity<>(point, HttpStatus.OK);
     }
+
+    // update charging point
+    @PutMapping("/points/{pointId}")
+    public ResponseEntity<ChargingPointDto> updatePoint(@RequestBody ChargingPointDto pointDto, @PathVariable("pointId") long pointId) {
+
+        var updatedPoint = _pointService.doUpdate(pointDto, pointId);
+
+        return new ResponseEntity<>(updatedPoint, HttpStatus.OK);
+    }
+
 }
