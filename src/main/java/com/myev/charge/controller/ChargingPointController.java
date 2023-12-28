@@ -17,6 +17,18 @@ public class ChargingPointController {
         this._pointService = pointService;
     }
 
+    // create charging point
+    @PostMapping("/points")
+    public ResponseEntity<ChargingPointDto> createPoint(
+            @PathVariable("stationId") long stationsId,
+            @RequestBody ChargingPointDto pointDto) {
+
+        var newPoint = _pointService.doCreate(stationsId, pointDto);
+
+        return new ResponseEntity<>(newPoint, HttpStatus.CREATED);
+    }
+
+
     // get all charging points with pagination and sorting
     @GetMapping("/points")
     public ResponseEntity<ChargingPointResponse> getAllByStationId(

@@ -3,6 +3,8 @@ package com.myev.charge.service.impl;
 import com.myev.charge.domain.ChargerType;
 import com.myev.charge.domain.ChargingPoint;
 import com.myev.charge.domain.ChargingStation;
+import com.myev.charge.exception.MaxChargingPointsReachedException;
+import com.myev.charge.exception.ResourceNotFoundException;
 import com.myev.charge.payload.*;
 import com.myev.charge.repository.ChargingPointRepository;
 import com.myev.charge.repository.ChargingStationRepository;
@@ -30,7 +32,34 @@ public class ChargingPointServiceImpl implements IChargingPointService {
 
     @Override
     public ChargingPointDto doCreate(long stationId, ChargingPointDto pointDto) {
-        return null;
+
+        // get charging station by id
+        ChargingStation station = _stationRepository.findById(stationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Charging Station", "id", stationId));
+
+        // Get number of charging points of the station
+        int maxPoints = station.getNumberOfChargingPoints();
+
+        // get total number of charging points of the station
+        int totalPoints = _pointRepository.findAll().size();
+
+
+        // Check if the station has reached the maximum number of charging points
+        if (totalPoints >= maxPoints) {
+            throw new MaxChargingPointsReachedException("Charging Station", stationId, maxPoints);
+        }
+
+        // convert Dto to Entity
+        ChargingPoint point = mapToEntity(pointDto);
+
+        // set charging station to charging point
+        point.setChargingStation(station);
+
+        // save Entity to database
+        ChargingPoint newPoint = _pointRepository.save(point);
+
+        return mapToDto(newPoint);
+
     }
 
     @Override
