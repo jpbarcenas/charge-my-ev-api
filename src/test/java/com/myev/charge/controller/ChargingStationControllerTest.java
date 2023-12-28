@@ -2,8 +2,7 @@ package com.myev.charge.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myev.charge.domain.enums.StationStatus;
-import com.myev.charge.payload.ChargingStationDto;
-import com.myev.charge.payload.LocationDto;
+import com.myev.charge.payload.*;
 import com.myev.charge.service.IChargingStationService;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -18,6 +17,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -80,11 +83,125 @@ class ChargingStationControllerTest {
     }
 
     @Test
-    void getAllStations() {
+    void getAllStations() throws Exception {
+        // given
+        int recordCount = 15;
+        List<ChargingStationVO> stationVOList = new ArrayList<>();
+
+        for (int i = 1; i <= recordCount; i++){
+            LocationVO locationVO = new LocationVO();
+            locationVO.setAddress(i + " Main St");
+            locationVO.setLatitude(45.0 + i);
+            locationVO.setLongitude(-38.0 - i);
+
+            ChargingStationVO stationDto = new ChargingStationVO();
+            stationDto.setStationId((long) i);
+            stationDto.setNumberOfChargingPoints(2);
+            stationDto.setLocation(locationVO);
+
+            if (i % 2 == 0)
+            {
+                stationDto.setStatus(StationStatus.IN_USE);
+            }
+            else
+            {
+                stationDto.setStatus(StationStatus.AVAILABLE);
+            }
+
+            stationVOList.add(stationDto);
+        }
+
+        ChargingStationResponse stationResponse = new ChargingStationResponse();
+        stationResponse.setContent(stationVOList);
+        stationResponse.setTotalElements(stationVOList.size());
+        stationResponse.setPageNo(0);
+        stationResponse.setPageSize(10);
+        stationResponse.setTotalPages(3);
+        stationResponse.setLast(false);
+
+
+        BDDMockito.given(_stationService.doGetAll(0, 10, "id", "asc"))
+                .willReturn(stationResponse);
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/charging/stations")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(jsonPath("$.content", Matchers.hasSize(15)));
+
+        // verify that each element of the response content is the same as the corresponding element of the stationVOList
+        for (int i = 0; i < recordCount; i++) {
+            response.andExpect(jsonPath("$.content[" + i + "].stationId", CoreMatchers.is(i + 1)))
+                    .andExpect(jsonPath("$.content[" + i + "].numberOfChargingPoints", CoreMatchers.is(2)))
+                    .andExpect(jsonPath("$.content[" + i + "].location.address", CoreMatchers.is((i + 1) + " Main St")))
+                    .andExpect(jsonPath("$.content[" + i + "].location.latitude", CoreMatchers.is(45.0 + i + 1)))
+                    .andExpect(jsonPath("$.content[" + i + "].location.longitude", CoreMatchers.is(-38.0 - i - 1)));
+        }
+
+
     }
 
     @Test
-    void getStationById() {
+    void getStationById() throws Exception {
+        // given
+        int recordCount = 15;
+        List<ChargingStationVO> stationVOList = new ArrayList<>();
+
+        for (int i = 1; i <= recordCount; i++){
+            LocationVO locationVO = new LocationVO();
+            locationVO.setAddress(i + " Main St");
+            locationVO.setLatitude(45.0 + i);
+            locationVO.setLongitude(-38.0 - i);
+
+            ChargingStationVO stationDto = new ChargingStationVO();
+            stationDto.setStationId((long) i);
+            stationDto.setNumberOfChargingPoints(2);
+            stationDto.setLocation(locationVO);
+
+            if (i % 2 == 0)
+            {
+                stationDto.setStatus(StationStatus.IN_USE);
+            }
+            else
+            {
+                stationDto.setStatus(StationStatus.AVAILABLE);
+            }
+
+            stationVOList.add(stationDto);
+        }
+
+        ChargingStationVO stationVO = stationVOList.get(4);
+
+        LocationDto locationDto = new LocationDto();
+        locationDto.setAddress(stationVO.getLocation().getAddress());
+        locationDto.setLatitude(stationVO.getLocation().getLatitude());
+        locationDto.setLongitude(stationVO.getLocation().getLongitude());
+
+        ChargingStationDto stationDto = new ChargingStationDto();
+        stationDto.setId(stationVO.getStationId());
+        stationDto.setNumberOfChargingPoints(stationVO.getNumberOfChargingPoints());
+        stationDto.setStatus(stationVO.getStatus());
+        stationDto.setLocation(locationDto);
+
+        BDDMockito.given(_stationService.doGetById(stationDto.getId()))
+                .willReturn(stationDto);
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/charging/stations/" + stationDto.getId())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", CoreMatchers.is(stationDto.getId().intValue())))
+                .andExpect(jsonPath("$.numberOfChargingPoints", CoreMatchers.is(stationDto.getNumberOfChargingPoints())))
+                .andExpect(jsonPath("$.status", CoreMatchers.is(stationDto.getStatus().toString())))
+                .andExpect(jsonPath("$.location.address", CoreMatchers.is(stationDto.getLocation().getAddress())))
+                .andExpect(jsonPath("$.location.latitude", CoreMatchers.is(stationDto.getLocation().getLatitude())))
+                .andExpect(jsonPath("$.location.longitude", CoreMatchers.is(stationDto.getLocation().getLongitude())));
     }
 
     @Test
