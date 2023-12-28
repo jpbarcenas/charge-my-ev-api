@@ -65,6 +65,8 @@ class ChargingStationRepositoryTest {
         _station.setLocation(_location);
         _station.setNumberOfChargingPoints(1);
         _station.setStatus(StationStatus.IN_USE);
+
+        _stationList.add(_station);
     }
 
     @AfterEach
@@ -92,5 +94,32 @@ class ChargingStationRepositoryTest {
         assertEquals(expectedStation.getLocation().getLongitude(), actualStation.getLocation().getLongitude());
         assertEquals(expectedStation.getNumberOfChargingPoints(), actualStation.getNumberOfChargingPoints());
         assertEquals(expectedStation.getStatus(), actualStation.getStatus());
+    }
+
+    @Test
+    void testFindAll() {
+        // given
+        List<ChargingStation> expectedStationList = _stationList;
+        _stationRepository.saveAll(expectedStationList);
+
+        // when
+        List<ChargingStation> actualStationList = _stationRepository.findAll();
+
+        // then
+        // assert that the actualStationList is not null
+        assertNotNull(actualStationList);
+
+        // assert that the actualStationList has the same size as the expectedStationList
+        assertEquals(expectedStationList.size(), actualStationList.size());
+
+        // assert that the actualStationList has the same values as the expectedStationList
+        for (int i = 0; i < expectedStationList.size(); i++) {
+            assertEquals(expectedStationList.get(i).getId(), actualStationList.get(i).getId());
+            assertEquals(expectedStationList.get(i).getLocation().getAddress(), actualStationList.get(i).getLocation().getAddress());
+            assertEquals(expectedStationList.get(i).getLocation().getLatitude(), actualStationList.get(i).getLocation().getLatitude());
+            assertEquals(expectedStationList.get(i).getLocation().getLongitude(), actualStationList.get(i).getLocation().getLongitude());
+            assertEquals(expectedStationList.get(i).getNumberOfChargingPoints(), actualStationList.get(i).getNumberOfChargingPoints());
+            assertEquals(expectedStationList.get(i).getStatus(), actualStationList.get(i).getStatus());
+        }
     }
 }
