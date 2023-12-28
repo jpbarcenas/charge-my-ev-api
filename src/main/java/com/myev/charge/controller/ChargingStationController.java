@@ -1,13 +1,11 @@
 package com.myev.charge.controller;
 
+import com.myev.charge.payload.ChargingStationDto;
 import com.myev.charge.payload.ChargingStationResponse;
 import com.myev.charge.service.IChargingStationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/charging/stations")
@@ -20,6 +18,15 @@ public class ChargingStationController {
         this._stationService = stationService;
     }
 
+    // create charging station
+    @PostMapping
+    public ResponseEntity<ChargingStationDto> createStation(@RequestBody ChargingStationDto stationDto) {
+
+        var newStation = _stationService.doCreate(stationDto);
+
+        return new ResponseEntity<>(newStation, HttpStatus.CREATED);
+    }
+
     // get all charging stations with pagination and sorting
     @GetMapping
     public ResponseEntity<ChargingStationResponse> getAllStations(
@@ -30,4 +37,6 @@ public class ChargingStationController {
     ) {
         return new ResponseEntity<>(_stationService.doGetAll(pageNo, pageSize, sortBy, sortDir), HttpStatus.OK);
     }
+
+
 }

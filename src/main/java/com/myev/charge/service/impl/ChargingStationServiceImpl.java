@@ -1,7 +1,10 @@
 package com.myev.charge.service.impl;
 
+import com.myev.charge.domain.ChargerType;
 import com.myev.charge.domain.ChargingPoint;
 import com.myev.charge.domain.ChargingStation;
+import com.myev.charge.domain.Location;
+import com.myev.charge.exception.DuplicateLocationException;
 import com.myev.charge.payload.*;
 import com.myev.charge.repository.ChargingStationRepository;
 import com.myev.charge.service.IChargingStationService;
@@ -28,7 +31,18 @@ public class ChargingStationServiceImpl implements IChargingStationService {
 
     @Override
     public ChargingStationDto doCreate(ChargingStationDto stationDto) {
-        return null;
+        // convert Dto to Entity
+        ChargingStation station = mapToEntity(stationDto);
+
+        // check if the address already exists
+        if (existsByLocationAddress(station.getLocation().getAddress())) {
+            throw new DuplicateLocationException("Charging Station", "address", station.getLocation().getAddress());
+        }
+
+        // save Entity to database
+        ChargingStation newStation = _stationRepository.save(station);
+
+        return mapToDto(newStation);
     }
 
     @Override
@@ -73,6 +87,101 @@ public class ChargingStationServiceImpl implements IChargingStationService {
     @Override
     public void doDelete(long id) {
 
+    }
+
+    private boolean existsByLocationAddress(String address) {
+        ChargingStation station = _stationRepository.findAll().stream()
+                .filter(s -> s.getLocation().getAddress().equals(address))
+                .findFirst()
+                .orElse(null);
+
+        return station != null;
+    }
+
+    private ChargingStationDto mapToDto(ChargingStation station) {
+        LocationDto locationDto = new LocationDto();
+        locationDto.setAddress(station.getLocation().getAddress());
+        locationDto.setLatitude(station.getLocation().getLatitude());
+        locationDto.setLongitude(station.getLocation().getLongitude());
+
+        ChargingStationDto stationDto = new ChargingStationDto();
+        stationDto.setId(station.getId());
+        stationDto.setLocation(locationDto);
+        stationDto.setNumberOfChargingPoints(station.getNumberOfChargingPoints());
+        stationDto.setStatus(station.getStatus());
+
+        if (station.getChargingPoints() == null) {
+            stationDto.setChargingPoints(null);
+        }
+        else {
+            Set<ChargingPointDto> chargingPointDtoSet = getChargingPointDto(station);
+
+            stationDto.setChargingPoints(chargingPointDtoSet);
+        }
+
+        return stationDto;
+    }
+
+    private Set<ChargingPointDto> getChargingPointDto(ChargingStation station) {
+        Set<ChargingPointDto> chargingPointDtoSet = new HashSet<>();
+        for (ChargingPoint chargingPoint : station.getChargingPoints()) {
+            ChargingPointDto chargingPointDto = new ChargingPointDto();
+            chargingPointDto.setId(chargingPoint.getId());
+            chargingPointDto.setPowerLevel(chargingPoint.getPowerLevel());
+
+            ChargerTypeDto chargerTypeDto = new ChargerTypeDto();
+            chargerTypeDto.setType(chargingPoint.getChargerType().getType());
+            chargerTypeDto.setSpeed(chargingPoint.getChargerType().getSpeed());
+            chargerTypeDto.setPrice(chargingPoint.getChargerType().getPrice());
+
+            chargingPointDto.setChargerType(chargerTypeDto);
+
+            chargingPointDtoSet.add(chargingPointDto);
+        }
+        return chargingPointDtoSet;
+    }
+
+    private ChargingStation mapToEntity(ChargingStationDto stationDto) {
+        Location location = new Location();
+        location.setAddress(stationDto.getLocation().getAddress());
+        location.setLatitude(stationDto.getLocation().getLatitude());
+        location.setLongitude(stationDto.getLocation().getLongitude());
+
+        ChargingStation station = new ChargingStation();
+        station.setId(stationDto.getId());
+        station.setLocation(location);
+        station.setNumberOfChargingPoints(stationDto.getNumberOfChargingPoints());
+        station.setStatus(stationDto.getStatus());
+
+        if (stationDto.getChargingPoints() == null) {
+            station.setChargingPoints(null);
+        }
+        else {
+            Set<ChargingPoint> chargingPointSet = getChargingPoints(stationDto);
+
+            station.setChargingPoints(chargingPointSet);
+        }
+
+        return station;
+    }
+
+    private Set<ChargingPoint> getChargingPoints(ChargingStationDto stationDto) {
+        Set<ChargingPoint> chargingPointSet = new HashSet<>();
+        for (ChargingPointDto chargingPointDto : stationDto.getChargingPoints()) {
+            ChargingPoint chargingPoint = new ChargingPoint();
+            chargingPoint.setId(chargingPointDto.getId());
+            chargingPoint.setPowerLevel(chargingPointDto.getPowerLevel());
+
+            ChargerType chargerType = new ChargerType();
+            chargerType.setType(chargingPointDto.getChargerType().getType());
+            chargerType.setSpeed(chargingPointDto.getChargerType().getSpeed());
+            chargerType.setPrice(chargingPointDto.getChargerType().getPrice());
+
+            chargingPoint.setChargerType(chargerType);
+
+            chargingPointSet.add(chargingPoint);
+        }
+        return chargingPointSet;
     }
 
     private ChargingStationVO mapToVO(ChargingStation station) {
