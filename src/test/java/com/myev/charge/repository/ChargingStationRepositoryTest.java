@@ -71,6 +71,8 @@ class ChargingStationRepositoryTest {
 
     @AfterEach
     void tearDown() {
+        _stationList.remove(_station);
+        _stationRepository.deleteAll();
     }
 
     @Test
@@ -121,5 +123,29 @@ class ChargingStationRepositoryTest {
             assertEquals(expectedStationList.get(i).getNumberOfChargingPoints(), actualStationList.get(i).getNumberOfChargingPoints());
             assertEquals(expectedStationList.get(i).getStatus(), actualStationList.get(i).getStatus());
         }
+    }
+
+    @Test
+    void testFindById() {
+        // given
+        ChargingStation expectedStation = _station;
+        _stationRepository.saveAll(_stationList);
+
+        // when
+        ChargingStation actualStation = _stationRepository.findById(expectedStation.getId()).orElse(null);
+
+        // then
+        // assert that the actualStation is not null
+        assertNotNull(actualStation);
+
+        // assert that the actualStation has an id
+        assertEquals(expectedStation.getId(), actualStation.getId());
+
+        // assert that the actualStation has the same values as the expectedStation
+        assertEquals(expectedStation.getLocation().getAddress(), actualStation.getLocation().getAddress());
+        assertEquals(expectedStation.getLocation().getLatitude(), actualStation.getLocation().getLatitude());
+        assertEquals(expectedStation.getLocation().getLongitude(), actualStation.getLocation().getLongitude());
+        assertEquals(expectedStation.getNumberOfChargingPoints(), actualStation.getNumberOfChargingPoints());
+        assertEquals(expectedStation.getStatus(), actualStation.getStatus());
     }
 }
