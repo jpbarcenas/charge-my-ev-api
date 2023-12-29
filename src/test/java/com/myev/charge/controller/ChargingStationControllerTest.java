@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 
 
 import static org.mockito.ArgumentMatchers.*;
@@ -205,6 +205,33 @@ class ChargingStationControllerTest {
                 .andExpect(jsonPath("$.location.address", CoreMatchers.is(stationDto.getLocation().getAddress())))
                 .andExpect(jsonPath("$.location.latitude", CoreMatchers.is(stationDto.getLocation().getLatitude())))
                 .andExpect(jsonPath("$.location.longitude", CoreMatchers.is(stationDto.getLocation().getLongitude())));
+    }
+
+    @DisplayName("Test Get Charging Station By Id with INVALID Id")
+    @Test
+    void getStationByIdInvalid() throws Exception {
+        // given
+        long stationId = 300L;
+
+        LocationDto locationDto = new LocationDto();
+        locationDto.setAddress("123 Main St");
+        locationDto.setLatitude(85.0);
+        locationDto.setLongitude(-38.0);
+
+        ChargingStationDto stationDto = new ChargingStationDto();
+        stationDto.setId(998L);
+        stationDto.setNumberOfChargingPoints(2);
+        stationDto.setStatus(StationStatus.AVAILABLE);
+        stationDto.setLocation(locationDto);
+
+        given(_stationService.doGetById(stationId)).willReturn(null);
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/charging/stations/" + stationId));
+
+        // then
+        response.andExpect(status().isNotFound())
+                .andDo(print());
     }
 
     @Test
