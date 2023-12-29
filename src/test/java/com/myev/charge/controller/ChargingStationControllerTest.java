@@ -235,6 +235,7 @@ class ChargingStationControllerTest {
                 .andDo(print());
     }
 
+    @DisplayName("Test Update Charging Station")
     @Test
     void updateStation() throws Exception {
         // given
@@ -284,6 +285,7 @@ class ChargingStationControllerTest {
                 .andExpect(jsonPath("$.location.longitude", CoreMatchers.is(updatedStationDto.getLocation().getLongitude())));
     }
 
+    @DisplayName("Test Update Charging Station with INVALID Id")
     @Test
     void updateStationInvalidId() throws Exception {
         // given
@@ -327,7 +329,20 @@ class ChargingStationControllerTest {
                 .andDo(print());
     }
 
+    @DisplayName("Test Delete Charging Station")
     @Test
-    void deleteStation() {
+    void deleteStation() throws Exception {
+        // given
+        long stationId = 998L;
+        willDoNothing().given(_stationService).doDelete(stationId);
+
+        // when
+        ResultActions response = mockMvc.perform(delete("/api/charging/stations/" + stationId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().string("Charging Station has been deleted!"));
     }
 }
