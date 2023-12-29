@@ -8,6 +8,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -49,6 +50,7 @@ class ChargingStationControllerTest {
     void tearDown() {
     }
 
+    @DisplayName("Test Create Charging Station")
     @Test
     void createStation() throws Exception {
         // given
@@ -83,6 +85,7 @@ class ChargingStationControllerTest {
 
     }
 
+    @DisplayName("Test Get All Charging Stations with Pagination and Sorting")
     @Test
     void getAllStations() throws Exception {
         // given
@@ -143,8 +146,9 @@ class ChargingStationControllerTest {
         }
     }
 
+    @DisplayName("Test Get Charging Station By Id with VALID Id")
     @Test
-    void getStationById() throws Exception {
+    void getStationByIdValid() throws Exception {
         // given
         int recordCount = 15;
         List<ChargingStationVO> stationVOList = new ArrayList<>();
