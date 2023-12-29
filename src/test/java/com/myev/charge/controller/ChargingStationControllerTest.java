@@ -9,23 +9,24 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.awaitility.Awaitility.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @WebMvcTest(ChargingStationController.class)
@@ -62,7 +63,7 @@ class ChargingStationControllerTest {
         stationDto.setStatus(StationStatus.AVAILABLE);
         stationDto.setLocation(locationDto);
 
-        BDDMockito.given(_stationService.doCreate(ArgumentMatchers.any(ChargingStationDto.class)))
+        given(_stationService.doCreate(any(ChargingStationDto.class)))
                 .willAnswer((invocation) -> invocation.getArgument(0));
 
         // when
@@ -71,7 +72,7 @@ class ChargingStationControllerTest {
                 .content(mapper.writeValueAsString(stationDto)));
 
         // then
-        response.andDo(MockMvcResultHandlers.print())
+        response.andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", CoreMatchers.is(998)))
                 .andExpect(jsonPath("$.numberOfChargingPoints", CoreMatchers.is(2)))
@@ -120,7 +121,7 @@ class ChargingStationControllerTest {
         stationResponse.setLast(false);
 
 
-        BDDMockito.given(_stationService.doGetAll(0, 10, "id", "asc"))
+        given(_stationService.doGetAll(0, 10, "id", "asc"))
                 .willReturn(stationResponse);
 
         // when
@@ -128,8 +129,8 @@ class ChargingStationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
-        response.andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print())
+        response.andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(jsonPath("$.content", Matchers.hasSize(15)));
 
         // verify that each element of the response content is the same as the corresponding element of the stationVOList
@@ -140,8 +141,6 @@ class ChargingStationControllerTest {
                     .andExpect(jsonPath("$.content[" + i + "].location.latitude", CoreMatchers.is(45.0 + i + 1)))
                     .andExpect(jsonPath("$.content[" + i + "].location.longitude", CoreMatchers.is(-38.0 - i - 1)));
         }
-
-
     }
 
     @Test
@@ -186,7 +185,7 @@ class ChargingStationControllerTest {
         stationDto.setStatus(stationVO.getStatus());
         stationDto.setLocation(locationDto);
 
-        BDDMockito.given(_stationService.doGetById(stationDto.getId()))
+        given(_stationService.doGetById(stationDto.getId()))
                 .willReturn(stationDto);
 
         // when
@@ -194,7 +193,7 @@ class ChargingStationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
-        response.andDo(MockMvcResultHandlers.print())
+        response.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", CoreMatchers.is(stationDto.getId().intValue())))
                 .andExpect(jsonPath("$.numberOfChargingPoints", CoreMatchers.is(stationDto.getNumberOfChargingPoints())))
