@@ -154,19 +154,14 @@ In order to use and test the code locally, you should download and install the f
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
    git clone https://github.com/jpbarcenas/charge-my-ev-api.git
    ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+3. Load the project in your IDE
+4. Build the project
+5. Run the project
+6. Open Postman and import the collection of requests from the file `Charge My EV.postman_collection.json`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -186,20 +181,20 @@ _For more examples, please refer to the [Documentation](https://github.com/jpbar
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ WIP ] Manage EV Charging Station
-    - [ DONE ] Create Stations
-    - [ DONE ] Get List of Stations
-    - [ DONE ] Get a Station By Id
-    - [ DONE ] Update Stations
-    - [ DONE ] Delete Stations
-    - [ WIP ] Get Station Status (AVAILABLE, IN USE)
-- [ WIP ] Manage Stations Charging Points
-    - [ DONE ] Create Points
-    - [ DONE ] Get List of Points for a Station
-    - [ DONE ] Get a Point Details for a Station
-    - [ DONE ] Update Points
-    - [ DONE ] Delete Points
-    - [ WIP ] Get Points Status (AVAILABLE, IN USE)
+- [ ] Manage EV Charging Station
+    - [x] Create Stations
+    - [x] Get List of Stations
+    - [x] Get a Station By Id
+    - [x] Update Stations
+    - [x] Delete Stations
+    - [ ] Get Station Status (AVAILABLE, IN USE)
+- [ ] Manage Stations Charging Points
+    - [x] Create Points
+    - [x] Get List of Points for a Station
+    - [x] Get a Point Details for a Station
+    - [x] Update Points
+    - [x] Delete Points
+    - [ ] Get Points Status (AVAILABLE, IN USE)
 
 See the [open issues](https://github.com/jpbarcenas/charge-my-ev-api/issues) for a full list of proposed features (and known issues).
 
@@ -218,7 +213,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Jorge Pérez - [@jpbarcenas](https://twitter.com/jpbarcenas) - jpbarcenas.contractor@gmail.com
+Jorge Pérez Bárcenas - [@jpbarcenas](https://twitter.com/jpbarcenas) - jpbarcenas.contractor@gmail.com
 
 Project Link: [https://github.com/jpbarcenas/charge-my-ev-api](https://github.com/jpbarcenas/charge-my-ev-api)
 
