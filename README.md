@@ -96,34 +96,34 @@ The API allow for the creation, retrieval, update, and deletion of charging stat
 
 ## Project Requirements
 #### Backend:
-* Design and implement a REST API.
-* Use Java 8+ and the Spring Boot framework
-* Persist data to a MySQL database using Hibernate/JPA
-* Implement caching where applicable (e.g. for availability status check)
-* Achieve at least 85% test coverage using JUnit and Mockito
-* Follow best practices for REST API design and scalability
-* Implement TDD/BDD during development
-* Use atomic commits, follow Git best practices and publish your code to a public GitHub repository
-* Provide instructions for running/testing the API locally
-* Build a Docker image for the API and provide the image tag
+- [x] Design and implement a REST API.
+- [x] Use Java 8+ and the Spring Boot framework
+- [x] Persist data to a MySQL database using Hibernate/JPA
+- [ ] Implement caching where applicable (e.g. for availability status check)
+- [ ] Achieve at least 85% test coverage using JUnit and Mockito
+- [x] Follow best practices for REST API design and scalability
+- [x] Implement TDD/BDD during development
+- [x] Use atomic commits, follow Git best practices and publish your code to a public GitHub repository
+- [x] Provide instructions for running/testing the API locally
+- [ ] Build a Docker image for the API and provide the image tag
 
 #### Bonus:
-* Deploy the API to a cloud platform and provide a live URL 
-* Implement monitoring/alerting for the API 
-* Implement authentication/authorization
-* Implement an architecture based in microservices using Spring.
-* Create a frontend application to consume the backend API, ideally using Angular.
-	* Build components to:
-		* List all charging stations 
-		* View details for a single charging station
-		* Check availability status of a charging station
-	* Follow Angular best practices for:
-		* Project structure 
-		* Component reusability
-		* Dependency management 
-		* Routing
-		* Testing
-	* Containerize the Angular application in a separate Docker image
+- [ ] Deploy the API to a cloud platform and provide a live URL 
+- [ ] Implement monitoring/alerting for the API 
+- [ ] Implement authentication/authorization
+- [ ] Implement an architecture based in microservices using Spring.
+- [ ] Create a frontend application to consume the backend API, ideally using Angular.
+    - [ ] Build components to:
+        - [ ] List all charging stations 
+        - [ ] View details for a single charging station
+        - [ ] Check availability status of a charging station
+    - [ ] Follow Angular best practices for:
+        - [ ] Project structure 
+        - [ ] Component reusability
+        - [ ] Dependency management 
+        - [ ] Routing
+        - [ ] Testing
+    - [ ] Containerize the Angular application in a separate Docker image
 
 
 ### Built With
