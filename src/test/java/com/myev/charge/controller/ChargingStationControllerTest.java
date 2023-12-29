@@ -235,7 +235,52 @@ class ChargingStationControllerTest {
     }
 
     @Test
-    void updateStation() {
+    void updateStation() throws Exception {
+        // given
+        long stationId = 998L;
+
+        LocationDto locationDto = new LocationDto();
+        locationDto.setAddress("123 Main St");
+        locationDto.setLatitude(85.0);
+        locationDto.setLongitude(-38.0);
+
+        ChargingStationDto stationDto = new ChargingStationDto();
+        stationDto.setId(998L);
+        stationDto.setNumberOfChargingPoints(2);
+        stationDto.setStatus(StationStatus.AVAILABLE);
+        stationDto.setLocation(locationDto);
+
+        // new stationDto
+        LocationDto updatedLocationDto = new LocationDto();
+        updatedLocationDto.setAddress("130 Main St");
+        updatedLocationDto.setLatitude(86.0);
+        updatedLocationDto.setLongitude(-48.0);
+
+        ChargingStationDto updatedStationDto = new ChargingStationDto();
+        updatedStationDto.setId(998L);
+        updatedStationDto.setNumberOfChargingPoints(3);
+        updatedStationDto.setStatus(StationStatus.IN_USE);
+        updatedStationDto.setLocation(updatedLocationDto);
+
+        given(_stationService.doGetById(stationId)).willReturn(stationDto);
+
+        given(_stationService.doUpdate(any(stationDto.getClass()), any(Long.class)))
+                .willAnswer((invocation) -> invocation.getArgument(0));
+
+        // when
+        ResultActions response = mockMvc.perform(put("/api/charging/stations/" + stationId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(updatedStationDto)));
+
+        // then
+        response.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.id", CoreMatchers.is(updatedStationDto.getId().intValue())))
+                .andExpect(jsonPath("$.numberOfChargingPoints", CoreMatchers.is(updatedStationDto.getNumberOfChargingPoints())))
+                .andExpect(jsonPath("$.status", CoreMatchers.is(updatedStationDto.getStatus().toString())))
+                .andExpect(jsonPath("$.location.address", CoreMatchers.is(updatedStationDto.getLocation().getAddress())))
+                .andExpect(jsonPath("$.location.latitude", CoreMatchers.is(updatedStationDto.getLocation().getLatitude())))
+                .andExpect(jsonPath("$.location.longitude", CoreMatchers.is(updatedStationDto.getLocation().getLongitude())));
     }
 
     @Test
