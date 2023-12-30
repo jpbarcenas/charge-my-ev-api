@@ -3,9 +3,9 @@ spring:
     name: charge-my-ev
 
   datasource:
-    url: jdbc:mysql://localhost:3306/charge_my_ev
+    url: jdbc:mysql://mysqldb.c9kgcogockbf.us-east-1.rds.amazonaws.com:3306/charge_my_ev
     username: root
-    password: P@ss4Admin.2024
+    password: Pass4Admin.2024
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -16,7 +16,3 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-
-  # Uncomment this section to run the application in a Docker container
-  profiles:
-    active: "aws"
