@@ -219,7 +219,7 @@ In order to use and test the code locally, you should download and install the f
 4. Open Postman and import the collection of requests from the file `ChargeMyEV.postman_collection.json`
 5. Test the API
 
-##### Testing the API deployed in Azure
+##### Testing the API deployed in [Azure](https://charge-my-ev-api.azurewebsites.net/api/charging/stations)
 1. Open Postman and import the collection of requests from the file `ChargeMyEV.postman_collection.azure.json`
 2. Test the API
    
