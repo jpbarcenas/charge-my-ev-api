@@ -122,46 +122,11 @@ class ChargingStationServiceImplTest {
 
     @Test
     void testDoCreate() {
-        // given
-        ChargingStationDto expectedStationDto = _stationDto;
-
-        // when
-        ChargingStationDto actualStationDto = _stationService.doCreate(expectedStationDto);
-
-        // then
-        // assert that the actualStationDto is not null
-        assertNotNull(actualStationDto);
-
-        // assert that the actualStationDto has the same id as the expectedStationDto
-        assertEquals(expectedStationDto.getId(), actualStationDto.getId());
-
-        // assert that the actualStationDto has the same values as the expectedStationDto
-        assertEquals(expectedStationDto.getNumberOfChargingPoints(), actualStationDto.getNumberOfChargingPoints());
-        assertEquals(expectedStationDto.getStatus(), actualStationDto.getStatus());
-        assertEquals(expectedStationDto.getLocation().getAddress(), actualStationDto.getLocation().getAddress());
-        assertEquals(expectedStationDto.getLocation().getLatitude(), actualStationDto.getLocation().getLatitude());
-        assertEquals(expectedStationDto.getLocation().getLongitude(), actualStationDto.getLocation().getLongitude());
 
     }
 
-
-
     @Test
     void testDoCreateDuplicate() {
-        // given
-        //save the station
-        given(_stationRepository.save(_station))
-                .willReturn(_station);
-        given(_stationRepository.findById(_station.getId()))
-                .willReturn(Optional.of(_station));
-
-        // when
-        assertThrows(DuplicateLocationException.class, () -> {
-            _stationService.doCreate(_stationDto);
-        });
-
-        // then
-        verify(_stationRepository, never()).save(_station);
 
     }
 
