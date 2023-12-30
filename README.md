@@ -166,6 +166,9 @@ In order to use and test the code locally, you should download and install the f
    ```
 
 #### Backend
+
+##### Running the project locally using your IDE
+
 1. Clone the repo
    ```sh
    git clone https://github.com/jpbarcenas/charge-my-ev-api.git
@@ -177,7 +180,7 @@ In order to use and test the code locally, you should download and install the f
 6. Test the API
 
 
-#### Docker using docker-compose
+##### Running the project locally with Docker using docker-compose
 1. Clone the repo
    ```sh
    git clone https://github.com/jpbarcenas/charge-my-ev-api.git
@@ -200,6 +203,23 @@ In order to use and test the code locally, you should download and install the f
 7. Test the API
 
 
+##### Running the project locally with Docker using an existing image from Docker Hub - [jpbarcenas89/chargemyevjpb](https://hub.docker.com/r/jpbarcenas89/chargemyevjpb)
+1. Get the mysql image from Docker Hub
+   ```sh
+   docker pull mysql:latest
+   ```
+2. Get the image from Docker Hub
+   ```sh
+   docker pull jpbarcenas89/chargemyevjpb:latest
+   ```  
+3. Run the following command in the root folder of the project
+   ```sh
+    docker compose up --build
+    ```
+4. Open Postman and import the collection of requests from the file `ChargeMyEV.postman_collection.json`
+5. Test the API
+
+   
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
