@@ -16,3 +16,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
+
+  profiles:
+    active: "docker"
