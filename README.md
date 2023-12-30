@@ -1,4 +1,3 @@
-
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
 <!--
@@ -105,7 +104,7 @@ The API allow for the creation, retrieval, update, and deletion of charging stat
 - [x] Implement TDD/BDD during development
 - [x] Use atomic commits, follow Git best practices and publish your code to a public GitHub repository
 - [x] Provide instructions for running/testing the API locally
-- [ ] Build a Docker image for the API and provide the image tag
+- [x] Build a Docker image for the API and provide the image tag
 
 #### Bonus:
 - [ ] Deploy the API to a cloud platform and provide a live URL 
@@ -168,14 +167,453 @@ In order to use and test the code locally, you should download and install the f
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+# Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+The API contains the following endpoints:
 
-_For more examples, please refer to the [Documentation](https://github.com/jpbarcenas/charge-my-ev-api)_
+## Manage EV Charging Station
+
+### Create Stations
+```http
+POST /api/charging/stations
+```
+
+#### Request Body
+```json
+{
+  "location": {
+    "address": "123 Pocito Street",
+    "latitude": 30.7128,
+    "longitude": -33.006
+  },
+  "numberOfChargingPoints": "1",
+  "status": "AVAILABLE"
+}
+```
+
+#### Response Body
+```json
+{
+  "id": 2,
+  "location": {
+    "address": "123 Pocito Street",
+    "latitude": 30.7128,
+    "longitude": -33.006
+  },
+  "numberOfChargingPoints": 1,
+  "chargingPoints": null,
+  "status": "AVAILABLE"
+}
+```
+
+#### Response Status for _"address = existing address"_
+```http
+406 Not Acceptable
+{
+    "timestamp": "2023-12-30T15:32:42.101+00:00",
+    "message": "Charging Station already exist with address : '123 Pocito Street'",
+    "details": "uri=/api/charging/stations"
+}
+```
+
+#### Response Status for _"address = null or empty"_
+```http
+400 Bad Request
+{
+    "timestamp": "2023-12-30T15:24:46.877+00:00",
+    "message": "Address must not be null",
+    "details": "uri=/api/charging/stations"
+}
+```
+
+#### Response Status for _"numberOfChargingPoints <= 0"_
+```http
+400 Bad Request
+{
+    "timestamp": "2023-12-30T15:24:46.877+00:00",
+    "message": "Number of Charging Points must be greater than 0",
+    "details": "uri=/api/charging/stations"
+}
+```
+
+#### Response Status for _"location = null or empty"_
+```http
+400 Bad Request
+{
+    "timestamp": "2023-12-30T15:24:46.877+00:00",
+    "message": "Location must not be null",
+    "details": "uri=/api/charging/stations"
+}
+```
+
+#### Response Status for _"status = null or empty"_
+```http
+400 Bad Request
+{
+    "timestamp": "2023-12-30T15:24:46.877+00:00",
+    "message": "Status must not be null",
+    "details": "uri=/api/charging/stations"
+}
+```
+
+#### Response Status for _"latitud == null or empty"_
+```http
+400 Bad Request
+{
+    "timestamp": "2023-12-30T15:24:46.877+00:00",
+    "message": "Latitude must not be null",
+    "details": "uri=/api/charging/stations"
+}
+```
+
+#### Response Status for _"longitud == null or empty"_
+```http
+400 Bad Request
+{
+    "timestamp": "2023-12-30T15:24:46.877+00:00",
+    "message": "Longitude must not be null",
+    "details": "uri=/api/charging/stations"
+}
+```
+
+### Get List of Stations
+```http
+GET /api/charging/stations
+```
+
+#### Response Body
+```json
+{
+  "content": [
+    {
+      "stationId": 1,
+      "location": {
+        "address": "122 Pocito Street",
+        "latitude": 60.7128,
+        "longitude": -36.006
+      },
+      "numberOfChargingPoints": 3,
+      "chargingPoints": [
+        {
+          "pointId": 1,
+          "stationId": 1,
+          "chargerType": {
+            "type": "AC",
+            "speed": 12,
+            "price": 15.0
+          },
+          "powerLevel": 100.0
+        }
+      ],
+      "status": "AVAILABLE"
+    },
+    {
+      "stationId": 2,
+      "location": {
+        "address": "123 Pocito Street",
+        "latitude": 30.7128,
+        "longitude": -33.006
+      },
+      "numberOfChargingPoints": 0,
+      "chargingPoints": [],
+      "status": "AVAILABLE"
+    }
+  ],
+  "pageNo": 0,
+  "pageSize": 10,
+  "totalElements": 2,
+  "totalPages": 1,
+  "last": true
+}
+```
+
+### Get a Station By Id
+```http
+GET /api/charging/stations/{id}
+```
+
+#### Response Body
+```json
+{
+  "id": 1,
+  "location": {
+    "address": "122 Pocito Street",
+    "latitude": 60.7128,
+    "longitude": -36.006
+  },
+  "numberOfChargingPoints": 3,
+  "chargingPoints": [
+    {
+      "id": 1,
+      "chargingStation": null,
+      "chargerType": {
+        "type": "AC",
+        "speed": 12,
+        "price": 15.0
+      },
+      "powerLevel": 100.0
+    }
+  ],
+  "status": "AVAILABLE"
+}
+```
+
+#### Response Status for _"invalid stationId"_
+```http
+404 Not Found
+{
+    "timestamp": "2023-12-30T15:24:46.877+00:00",
+    "message": "Charging Station not found with id : '4'",
+    "details": "uri=/api/charging/stations/4"
+}
+```
+
+### Update Stations
+```http
+PUT /api/charging/stations/{id}
+```
+
+#### Request Body
+```json
+{
+  "location": {
+    "address": "122 Pocito Street",
+    "latitude": 60.7128,
+    "longitude": -36.006
+  },
+  "numberOfChargingPoints": 3,
+  "chargingPoints": [],
+  "status": "AVAILABLE"
+}
+```
+
+#### Response Body
+```json
+{
+  "id": 1,
+  "location": {
+    "address": "122 Pocito Street",
+    "latitude": 60.7128,
+    "longitude": -36.006
+  },
+  "numberOfChargingPoints": 3,
+  "chargingPoints": [],
+  "status": "AVAILABLE"
+}
+```
+
+### Delete Stations
+```http
+DELETE /api/charging/stations/{id}
+```
+
+#### Response Body
+```string
+Charging Station has been deleted!
+```
+
+#### Response Status - Not Found
+```http
+404 Not Found
+{
+    "timestamp": "2023-12-30T15:24:46.877+00:00",
+    "message": "Charging Station not found with id : '4'",
+    "details": "uri=/api/charging/stations/4"
+}
+```
+
+## Manage Stations Charging Points
+
+### Create Points
+```http
+POST /api/charging/stations/{stationId}/points
+```
+
+#### Request Body
+```json
+{
+  "chargerType": {
+    "type": "DC",
+    "speed": 20,
+    "price": 25.0
+  },
+  "powerLevel": 100.0
+}
+```
+
+#### Response Body
+```json
+{
+  "id": 4,
+  "chargingStation": {
+    "id": 1,
+    "location": null,
+    "numberOfChargingPoints": 5,
+    "chargingPoints": null,
+    "status": "AVAILABLE"
+  },
+  "chargerType": {
+    "type": "DC",
+    "speed": 20,
+    "price": 25.0
+  },
+  "powerLevel": 100.0
+}
+```
+
+#### Response Status for _"request without stationId - /api/charging/stations/points"_
+```http
+405 Method Not Allowed
+{
+    "type": "about:blank",
+    "title": "Method Not Allowed",
+    "status": 405,
+    "detail": "Method 'POST' is not supported.",
+    "instance": "/api/charging/stations/points"
+}
+```
+
+#### Response Status for _"invalid stationId"_
+```http
+404 Not Found
+{
+    "timestamp": "2023-12-30T15:37:18.927+00:00",
+    "message": "Charging Station not found with id : '5'",
+    "details": "uri=/api/charging/stations/5/points"
+}
+```
+
+### Get List of Points for a Station
+```http
+GET /api/charging/stations/{stationId}/points
+```
+
+#### Response Body
+```json
+{
+  "content": [
+    {
+      "pointId": 1,
+      "stationId": 1,
+      "chargerType": {
+        "type": "AC",
+        "speed": 12,
+        "price": 15.0
+      },
+      "powerLevel": 100.0
+    },
+    {
+      "pointId": 2,
+      "stationId": 1,
+      "chargerType": {
+        "type": "AC",
+        "speed": 12,
+        "price": 15.0
+      },
+      "powerLevel": 90.0
+    }
+  ],
+  "pageNo": 0,
+  "pageSize": 10,
+  "totalElements": 4,
+  "totalPages": 1,
+  "last": true
+}
+```
+
+### Get a Point Details for a Station
+```http
+GET /api/charging/stations/{stationId}/points/{pointId}
+```
+
+#### Response Body
+```json
+{
+  "id": 3,
+  "chargingStation": {
+    "id": 1,
+    "location": null,
+    "numberOfChargingPoints": 5,
+    "chargingPoints": null,
+    "status": "AVAILABLE"
+  },
+  "chargerType": {
+    "type": "DC",
+    "speed": 20,
+    "price": 25.0
+  },
+  "powerLevel": 100.0
+}
+```
+
+#### Response Status for _"invalid stationId"_
+```http
+404 Not Found
+{
+    "timestamp": "2023-12-30T15:37:18.927+00:00",
+    "message": "Charging Station not found with id : '5'",
+    "details": "uri=/api/charging/stations/5/points/1"
+}
+```
+
+#### Response Status for _"invalid pointId"_
+```http
+404 Not Found
+{
+    "timestamp": "2023-12-30T15:37:18.927+00:00",
+    "message": "Charging Point not found with id : '5'",
+    "details": "uri=/api/charging/stations/1/points/5"
+}
+```
+
+### Update Points
+```http
+PUT /api/charging/stations/{stationId}/points/{pointId}
+```
+
+#### Request Body
+```json
+{
+  "chargerType": {
+    "type": "AC",
+    "speed": 10,
+    "price": 15.0
+  },
+  "powerLevel": 80.0
+}
+```
+
+#### Response Body
+```json
+{
+  "id": 3,
+  "chargingStation": {
+    "id": 1,
+    "location": null,
+    "numberOfChargingPoints": 5,
+    "chargingPoints": null,
+    "status": "AVAILABLE"
+  },
+  "chargerType": {
+    "type": "AC",
+    "speed": 10,
+    "price": 15.0
+  },
+  "powerLevel": 80.0
+}
+```
+
+### Delete Points
+```http
+DELETE /api/charging/stations/{stationId}/points/{pointId}
+```
+
+#### Response Body
+```string
+Charging point deleted successfully!
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- ROADMAP -->

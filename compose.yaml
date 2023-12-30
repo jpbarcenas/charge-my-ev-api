@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    container_name: mysqldb
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: charge_my_ev
+    networks:
+      chargemyev-mysql-net:
+
+  chargemyevjpb:
+    container_name: chargemyevjpb
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqldb
+    networks:
+      chargemyev-mysql-net:
+    restart: on-failure
+
+networks:
+  chargemyev-mysql-net:

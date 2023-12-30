@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: charge-my-ev
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/charge_my_ev
+    username: root
+    password: P@ss4Admin.2024
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+#  profiles:
+#    active: "docker"
