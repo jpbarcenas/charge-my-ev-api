@@ -17,5 +17,6 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
 
-#  profiles:
-#    active: "docker"
+  # Uncomment this section to run the application in a Docker container
+  profiles:
+    active: "docker"

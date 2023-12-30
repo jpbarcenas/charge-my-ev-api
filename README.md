@@ -153,17 +153,54 @@ In order to use and test the code locally, you should download and install the f
 
 ### Installation
 
+#### MySQL Database
+1. Open MySQL Workbench and connect to your local MySQL Server
+2. Create a new schema called `charge_my_ev`
+3. Modify the file `application.yml` located in `src/main/resources` and update the following properties with your local MySQL Server information:
+   ```yaml
+   datasource:
+     url: jdbc:mysql://localhost:3306/charge_my_ev
+     username: your_username # default: root
+     password: your_password # default: root
+     driver-class-name: com.mysql.cj.jdbc.Driver
+   ```
+
+#### Backend
 1. Clone the repo
    ```sh
    git clone https://github.com/jpbarcenas/charge-my-ev-api.git
    ```
-3. Load the project in your IDE
-4. Build the project
-5. Run the project
-6. Open Postman and import the collection of requests from the file `Charge My EV.postman_collection.json`
+2. Load the project in your IDE
+3. Build the project
+4. Run the project
+5. Open Postman and import the collection of requests from the file `ChargeMyEV.postman_collection.json`
+6. Test the API
+
+
+#### Docker using docker-compose
+1. Clone the repo
+   ```sh
+   git clone https://github.com/jpbarcenas/charge-my-ev-api.git
+    ```
+2. Load the project in your IDE
+3. Activate the Docker profile in by modifying the file `application.yml` located in `src/main/resources` and update the following properties:
+   ```yaml
+     profiles:
+       active: docker
+   ```
+4. Build the project with Maven
+   ```sh
+   mvn clean install
+   ```
+5. Run the following command in the root folder of the project
+   ```sh
+   docker compose up --build
+   ```
+6. Open Postman and import the collection of requests from the file `ChargeMyEV.postman_collection.json`
+7. Test the API
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- USAGE EXAMPLES -->
