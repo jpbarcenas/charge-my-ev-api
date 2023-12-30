@@ -107,7 +107,7 @@ The API allow for the creation, retrieval, update, and deletion of charging stat
 - [x] Build a Docker image for the API and provide the image tag
 
 #### Bonus:
-- [ ] Deploy the API to a cloud platform and provide a live URL 
+- [x] Deploy the API to a cloud platform and provide a live URL 
 - [ ] Implement monitoring/alerting for the API 
 - [ ] Implement authentication/authorization
 - [ ] Implement an architecture based in microservices using Spring.
@@ -219,6 +219,9 @@ In order to use and test the code locally, you should download and install the f
 4. Open Postman and import the collection of requests from the file `ChargeMyEV.postman_collection.json`
 5. Test the API
 
+##### Testing the API deployed in Azure
+1. Open Postman and import the collection of requests from the file `ChargeMyEV.postman_collection.azure.json`
+2. Test the API
    
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
